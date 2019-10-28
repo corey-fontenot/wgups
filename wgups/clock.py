@@ -1,28 +1,18 @@
+from configparser import ConfigParser
+
+
 class Clock:
-    """
-    Clock object creates and controls a clock
-    """
-    def __init__(self, start_time):
-        """
-        Creates a clock object
-        :param start_time: String representing start time of the clock in format: HH:MM AM/PM
-        """
 
-        # _time variable holds the number of seconds since start time
-        self._time = 0
-
-        # _start_time variable holds the start time in a tuple of format: (HH, MM)
-        # HH uses 24 hour time format
-        self._start_time = self.parse_time_string(start_time)
-
-    def __init__(self, start_time, time):
+    def __init__(self, time):
         """
         Create a clock object set at a particular time
-        :param start_time: String representing start time in format: HH:MM AM/PM :str
         :param time: time representing number of seconds since start time :int
         """
+        parser = ConfigParser()
+        parser.read("config.ini")
+
         self._time = time
-        self._start_time = self.parse_time_string(start_time)
+        self._start_time = self.parse_time_string(parser.get("application", "start_of_day"))
 
     @property
     def time(self):
@@ -104,7 +94,8 @@ class Clock:
         self.forward_minutes(minutes)
         self.forward_seconds(seconds)
 
-    def to_time_string(self):
+    @staticmethod
+    def to_time_string(time):
         """
         Converts _time to string format: HH:MM AM/PM
         :return: current time in string format
@@ -113,7 +104,7 @@ class Clock:
         Best Case Runtime Complexity: O(1)
         """
         # current time in number of seconds since start time
-        seconds_left = self._time
+        seconds_left = time
 
         # divide seconds left by number of seconds in an hour
         hours, seconds_left = divmod(seconds_left, 60 * 60)
@@ -121,9 +112,13 @@ class Clock:
         # divide seconds left by number of seconds in a minute
         minutes, seconds_left = divmod(seconds_left, 60)
 
+        parser = ConfigParser()
+        parser.read("config.ini")
+        start_time = Clock.parse_time_string(parser.get("application", "start_of_day"))
+
         # Calculate current hour and minute
-        hours = self._start_time[0] + hours
-        minutes = self._start_time[1] + minutes
+        hours = start_time[0] + hours
+        minutes = start_time[1] + minutes
 
         # If minutes is greater or equal to 60, increment hours and subtract minutes
         # by number of minutes in an hour
@@ -144,7 +139,6 @@ class Clock:
 
         # return time in string format
         return f"{hours}:{minutes_str} {am_pm}"
-
 
     @staticmethod
     def parse_time_string(time):
@@ -177,19 +171,21 @@ class Clock:
         return hour, minute
 
     @staticmethod
-    def seconds_since_start(time, start_time):
+    def seconds_since_start(time):
         """
         Convert time string to number of seconds since start time
         :param time: time string in format: HH:MM AM/PM to be converted
-        :param start_time: string representation of start_time
         :return: number of seconds since start time
         """
+
+        parser = ConfigParser()
+        parser.read("config.ini")
 
         # initialize num_seconds to zero
         num_seconds = 0
 
         # convert start_time to hour, minute tuple
-        start_time = Clock.parse_time_string(start_time)
+        start_time = Clock.parse_time_string(parser.get("application", "start_of_day"))
 
         # convert current time to hour, minute tuple
         time = Clock.parse_time_string(time)

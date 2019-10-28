@@ -6,16 +6,15 @@ class Package:
     Package object represent a package in the WGUPS system
     """
 
-    def __init__(self, package_id, location, deadline, weight, special_instructions, status, start_time):
+    def __init__(self, package_id, location, deadline, mass, special_instructions, status):
         """
         Create a Package object
         :param package_id: id of package :int
         :param location: location of the package :Location
         :param deadline: delivery deadline in seconds since start :int
-        :param weight: weight of package :float
+        :param mass: mass of package :float
         :param special_instructions: special instructions, if none, empty string :string
         :param status: status of package :string
-        :param start_time: start_time (for converting deadline to correct time string :str
 
         Worst Case Runtime Complexity: O(1)
         Best Case Runtime Complexity: O(1)
@@ -23,10 +22,9 @@ class Package:
         self._package_id = package_id
         self._location = location
         self._deadline = deadline
-        self._weight = weight
+        self._mass = mass
         self._special_instructions = special_instructions
         self._status = status
-        self._start_time = start_time
 
     # read-only package id
     @property
@@ -172,16 +170,14 @@ class Package:
         return True
 
     def __str__(self):
-        clock = Clock(self._start_time, self._deadline)
-
         special_instructions = self._special_instructions
         if not special_instructions:
             special_instructions = "None"
         result = f"""
         Package ID: {self._package_id}
         Location: {str(self._location)}
-        Deadline: {clock.to_time_string()}
-        Weight: {self._weight}
+        Deadline: {Clock.to_time_string(self._deadline)}
+        Mass: {self._mass}
         Special Instructions: {special_instructions}
         Status: {self._status}
         """
