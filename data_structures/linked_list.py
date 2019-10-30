@@ -44,6 +44,18 @@ class LinkedList:
         """
         return self._length
 
+    def is_empty(self):
+        """
+        Check if Linked List is empty
+        :return: True if list is empty, otherwise False
+
+        Worst Case Time Complexity: O(1)
+        Best Case Time Complexity: O(1)
+        """
+        if self.head is None:
+            return True
+        return False
+
     def append(self, new_node):
         """
         Adds a node to the end of the list
@@ -99,7 +111,7 @@ class LinkedList:
         # Iterate over list until item is found or end of list is reached
         cur_node = self.head
         while cur_node is not None:
-            if cur_node.data == key:
+            if cur_node.data.key == key:
                 return cur_node  # Item found
             cur_node = cur_node.next
         return None  # Item not found
@@ -172,6 +184,27 @@ class LinkedList:
 
         # node was not removed
         return False
+
+    def remove(self, item):
+        """
+        Remove specified item from linked list
+        :param item: item to be removed
+        :return: True if item removed, otherwise False
+
+        Worst Case Runtime Complexity: O(N)
+        Best Case Runtime Complexity: O(1)
+        """
+        pred_node = None
+        cur_node = self.head
+        while cur_node is not None:
+            if cur_node.data == item:
+                if pred_node is None:
+                    return self.remove_after(0)
+                else:
+                    return self.remove_after(pred_node)
+            pred_node = cur_node
+            cur_node = cur_node.next
+        return False  # unable to remove node
 
     def __iter__(self):
         """
