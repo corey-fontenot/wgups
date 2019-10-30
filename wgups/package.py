@@ -6,7 +6,7 @@ class Package:
     Package object represent a package in the WGUPS system
     """
 
-    def __init__(self, package_id, location, deadline, mass, special_instructions, status):
+    def __init__(self, package_id, location, deadline, mass, special_instructions, status="At Sorting Facility"):
         """
         Create a Package object
         :param package_id: id of package :int
@@ -35,6 +35,14 @@ class Package:
 
         Worst Case Runtime Complexity: O(1)
         Best Case Runtime Complexity: O(1)
+        """
+        return self._package_id
+
+    @property
+    def key(self):
+        """
+        Return key to be used when searching for a package
+        :return: return package_id :int
         """
         return self._package_id
 
@@ -86,7 +94,7 @@ class Package:
         self._deadline = time
 
     @property
-    def weight(self):
+    def mass(self):
         """
         Return weight of package
         :return: weight of package :float
@@ -94,19 +102,19 @@ class Package:
         Worst Case Runtime Complexity: O(1)
         Best Case Runtime Complexity: O(1)
         """
-        return self._weight
+        return self._mass
 
-    @weight.setter
-    def weight(self, weight):
+    @mass.setter
+    def weight(self, mass):
         """
         Set weight of package
-        :param weight: weight of package :float
+        :param mass: mass of package :float
         :return: none
 
         Worst Case Runtime Complexity: O(1)
         Best Case Runtime Complexity: O(1)
         """
-        self._weight = weight
+        self._mass = mass
 
     @property
     def special_instructions(self):
@@ -173,12 +181,6 @@ class Package:
         special_instructions = self._special_instructions
         if not special_instructions:
             special_instructions = "None"
-        result = f"""
-        Package ID: {self._package_id}
-        Location: {str(self._location)}
-        Deadline: {Clock.to_time_string(self._deadline)}
-        Mass: {self._mass}
-        Special Instructions: {special_instructions}
-        Status: {self._status}
-        """
+        result = (f"{self.package_id}: Address: {self.location} Mass: {self.mass} Deadline: {self.deadline}" +
+                  f" Status: {self.status} Inst: {special_instructions}\n")
         return result
