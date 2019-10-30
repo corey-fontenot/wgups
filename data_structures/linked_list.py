@@ -99,7 +99,7 @@ class LinkedList:
         # Iterate over list until item is found or end of list is reached
         cur_node = self.head
         while cur_node is not None:
-            if cur_node.data.key == key:
+            if cur_node.data == key:
                 return cur_node  # Item found
             cur_node = cur_node.next
         return None  # Item not found
