@@ -168,7 +168,7 @@ class Package:
         :return: True if has special instructions, otherwise False :boolean
 
         Worst Case Runtime Complexity: O(1)
-        Best Case Runtime Caomplexity: O(1)
+        Best Case Runtime Complexity: O(1)
         """
         # evaluate to false if _special_instructions is an empty string
         if not self._special_instructions:
