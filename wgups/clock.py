@@ -3,16 +3,14 @@ from configparser import ConfigParser
 
 class Clock:
 
-    def __init__(self, time):
+    def __init__(self, time, start_of_day):
         """
         Create a clock object set at a particular time
         :param time: time representing number of seconds since start time :int
         """
-        parser = ConfigParser()
-        parser.read("config.ini")
 
         self._time = time
-        self._start_time = self.parse_time_string(parser.get("application", "start_of_day"))
+        self._start_time = self.parse_time_string(start_of_day)
 
     @property
     def time(self):
@@ -95,7 +93,7 @@ class Clock:
         self.forward_seconds(seconds)
 
     @staticmethod
-    def to_time_string(time):
+    def to_time_string(time, start_of_day):
         """
         Converts _time to string format: HH:MM AM/PM
         :return: current time in string format
@@ -112,9 +110,7 @@ class Clock:
         # divide seconds left by number of seconds in a minute
         minutes, seconds_left = divmod(seconds_left, 60)
 
-        parser = ConfigParser()
-        parser.read("config.ini")
-        start_time = Clock.parse_time_string(parser.get("application", "start_of_day"))
+        start_time = Clock.parse_time_string(start_of_day)
 
         # Calculate current hour and minute
         hours = start_time[0] + hours
@@ -171,10 +167,11 @@ class Clock:
         return hour, minute
 
     @staticmethod
-    def seconds_since_start(time):
+    def seconds_since_start(time, start_time):
         """
         Convert time string to number of seconds since start time
         :param time: time string in format: HH:MM AM/PM to be converted
+        :start_time: the method counts the number of seconds from this time
         :return: number of seconds since start time
         """
 
@@ -185,7 +182,7 @@ class Clock:
         num_seconds = 0
 
         # convert start_time to hour, minute tuple
-        start_time = Clock.parse_time_string(parser.get("application", "start_of_day"))
+        start_time = Clock.parse_time_string(start_time)
 
         # convert current time to hour, minute tuple
         time = Clock.parse_time_string(time)
