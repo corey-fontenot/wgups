@@ -1,9 +1,10 @@
-from data_structures.linked_list import Node, LinkedList
+class EmptyBucket:
+    pass
 
 
 class HashTable:
     """
-    Hashtable using Chaining for collision resolution
+    Hashtable using Linear Probing for collision resolution
     """
     def __init__(self, initial_capacity=10):
         """
@@ -11,67 +12,158 @@ class HashTable:
 
         :param initial_capacity initial capacity of the hash table
 
+        Worst Case Runtime Complexity: O(1)
+        Best Case Runtime Complexity: O(1)
+        """
+
+        # Special constants to represent two types of empty buckets
+        self.EMPTY_SINCE_START = EmptyBucket()
+        self.EMPTY_AFTER_REMOVAL = EmptyBucket()
+
+        # Initialize table with EMPTY_SINCE_START buckets
+        self.table = [self.EMPTY_SINCE_START] * initial_capacity
+
+    def hash(self, key):
+        """
+        Returns a hash of the provided key
+        :param key: key to be hashed :str, int
+        :return: hashed key :int
+
+        Hashes a key using the multiplicative hash algorithm
+        Key can be a string or any time that can be converted to a string using the str() method
+        The value 223 was chosen for N using trial and error to minimize collisions
+
         Worst Case Runtime Complexity: O(N)
         Best Case Runtime Complexity: O(N)
         """
-        self._table = []
-        self._length = 0
-        for i in range(initial_capacity):
-            self._table.append(LinkedList())
-
-    def hash(self, key):
-        return int(key) % 40
-
-    def get_num_buckets(self):
-        """
-        Returns number of buckets in the hash table
-        :return: number of buckets :int
-        """
-        return len(self._table)
-
-    @property
-    def length(self):
-        """
-        Read-only property to return number of items in table
-        :return: number of items in table :int
-        """
-        return self._length
-
-    def get_bucket(self, bucket):
-        return self._table[bucket % self.get_num_buckets()]
+        string_hash = 5381
+        for char in str(key):
+            string_hash = (string_hash * 33) + int(char)
+        return string_hash % 223
 
     def insert(self, item):
         """
         Insert a new item into the hashtable if it does not already exist
 
-        Worst Case Time Complexity: O(N)
-        Best Case Time Complexity: O(1)
-        :param item: Item to be inserted
-        :return: True if item was inserted, otherwise False
+        :param item to be inserted, item must have a key attribute for hashing
+        :return True if item is inserted, False otherwise
         """
-        # If item is not already in the hashtable, insert it
-        if self.search(item.key) is None:
-            bucket = self._table[self.hash(item.key) % len(self._table)]
-            node = Node()
-            node.next = None
-            node.data = item
-            bucket.append(node)
-            self._length += 1
-            return True  # Successfully inserted
-        return False  # Not inserted
+        bucket = self.hash(item.key) % len(self.table)
+        buckets_probed = 0
+        while buckets_probed < len(self.table):
+            if type(self.table[bucket]) is EmptyBucket:
+                # Bucket is empty, insert item
+                self.table[bucket] = item
+                return True
+
+            # Bucket full continue probing with next bucket in the table
+            bucket = (bucket + 1) % len(self.table)
+            buckets_probed += 1
+
+        # Table is full, cannot be inserted
+        return False
 
     def remove(self, item):
         """
         Remove item from the hashtable if it exists
-        :param item: key of item to be removed
+        :param item: item to be removed, must have key attribute
         :return: True if item removed, otherwise False
-        """
-        bucket = self._table[self.hash(item.key) % len(self._table)]
-        removed = bucket.remove(item)
-        if removed:
-            self._length -= 1
-        return removed
 
-    def search(self, key):
-        bucket = self._table[self.hash(key) % len(self._table)]
-        return bucket.search(key)
+        Worst Case Runtime Complexity: O(N)
+        Best Case Runtime Complexity: O(1)
+        """
+        bucket = hash(item.key) % len(self.table)
+        buckets_probed = 0
+        while self.table[bucket] is not self.EMPTY_SINCE_START and buckets_probed < len(self.table):
+            if self.table[bucket] == item:
+                self.table[bucket] = self.EMPTY_AFTER_REMOVAL
+                # Item found and removed
+                return True
+
+            # bucket was occupied, so keep probing
+            bucket = (bucket + 1) % len(self.table)
+            buckets_probed += 1
+        # Item not found
+        return False
+
+    def search(self, item):
+        """
+        Finds item based on specified key
+        :param item: item being searched for
+        :return: found item or None if not found :Object, None
+
+        Worst Case Runtime Complexity: O(N)
+        Best Case Runtime Complexity: O(1)
+        """
+        bucket = hash(item.key) % len(self.table)
+        buckets_probed = 0
+        while self.table[bucket] is not self.EMPTY_SINCE_START and buckets_probed < len(self.table):
+
+            # Item was found
+            if self.table[bucket] == item:
+                return self.table[bucket]
+
+            # bucket was occupied, keep probing
+            bucket = (bucket + 1) % len(self.table)
+            buckets_probed += 1
+
+        # Item not found
+        return None
+
+    def __iter__(self):
+        return HashTableIterator(self)
+
+    def __str__(self):
+        """
+        Returns a string representation of the HashTable
+        Only works if object can be converted to a string (__str__ method is implemented)
+        :return: String representation of the HashTable
+
+        Worst Case Runtime Complexity: O(N)
+        Best Case Runtime Complexity: O(N)
+        """
+        result = ""
+        for item in self:
+            result += str(item)
+        return result
+
+
+class HashTableIterator:
+    """
+    Iterator for HashTable Objects
+    """
+    def __init__(self, hashtable):
+        """
+        Create HashTableIterator Object
+        :param hashtable: hashtable being iterated over
+        """
+        self._hashtable = hashtable
+
+        # index of next item to be returned
+        self._index = 0
+
+    def __next__(self):
+        """
+        Returns next item in current iteration
+        :return: next item :Object
+
+        Worst Case Runtime Complexity: O(N)
+        Best Case Runtime Complexity: O(1)
+        """
+        if self._index < len(self._hashtable.table):
+
+            # While current item is an EmptyBucket, Go to next item
+            while self._index < len(self._hashtable.table) and type(self._hashtable.table[self._index]) is EmptyBucket:
+                self._index += 1
+
+            # If current index is out of bounds, End iteration
+            if self._index >= len(self._hashtable.table):
+                raise StopIteration
+
+            # Return result and and increment index
+            result = self._hashtable.table[self._index]
+            self._index += 1
+            return result
+        raise StopIteration
+
+
