@@ -38,7 +38,7 @@ class HashTable:
         """
         string_hash = 5381
         for char in str(key):
-            string_hash = (string_hash * 33) + int(char)
+            string_hash = (string_hash * 33) + ord(char)
         return string_hash % 223
 
     def insert(self, item):
@@ -63,19 +63,19 @@ class HashTable:
         # Table is full, cannot be inserted
         return False
 
-    def remove(self, item):
+    def remove(self, key):
         """
         Remove item from the hashtable if it exists
-        :param item: item to be removed, must have key attribute
+        :param key: key of item to be removed
         :return: True if item removed, otherwise False
 
         Worst Case Runtime Complexity: O(N)
         Best Case Runtime Complexity: O(1)
         """
-        bucket = hash(item.key) % len(self.table)
+        bucket = self.hash(key) % len(self.table)
         buckets_probed = 0
         while self.table[bucket] is not self.EMPTY_SINCE_START and buckets_probed < len(self.table):
-            if self.table[bucket] == item:
+            if self.table[bucket].key == key:
                 self.table[bucket] = self.EMPTY_AFTER_REMOVAL
                 # Item found and removed
                 return True
@@ -86,21 +86,21 @@ class HashTable:
         # Item not found
         return False
 
-    def search(self, item):
+    def search(self, key):
         """
         Finds item based on specified key
-        :param item: item being searched for
+        :param key: key of item being searched
         :return: found item or None if not found :Object, None
 
         Worst Case Runtime Complexity: O(N)
         Best Case Runtime Complexity: O(1)
         """
-        bucket = hash(item.key) % len(self.table)
+        bucket = self.hash(key) % len(self.table)
         buckets_probed = 0
         while self.table[bucket] is not self.EMPTY_SINCE_START and buckets_probed < len(self.table):
 
             # Item was found
-            if self.table[bucket] == item:
+            if type(self.table[bucket]) is not EmptyBucket and self.table[bucket].key == key:
                 return self.table[bucket]
 
             # bucket was occupied, keep probing
