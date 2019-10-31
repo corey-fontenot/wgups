@@ -105,7 +105,7 @@ class Package:
         return self._mass
 
     @mass.setter
-    def weight(self, mass):
+    def mass(self, mass):
         """
         Set weight of package
         :param mass: mass of package :float
