@@ -26,6 +26,6 @@ with open(parser.get("files", "package_file"), 'r') as f:
             deadline = parser.get("application", "end_of_day")
 
         # Create package object and insert into hashtable
-        package = Package(int(row[0]), location, Clock.seconds_since_start(deadline), row[6], row[7])
+        package = Package(int(row[0]), location, Clock.seconds_since_start(deadline), float(row[6]), row[7])
         packages.insert(package)
 
