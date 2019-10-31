@@ -112,7 +112,7 @@ class LinkedList:
         cur_node = self.head
         while cur_node is not None:
             if cur_node.data.key == key:
-                return cur_node  # Item found
+                return cur_node.data  # Item found
             cur_node = cur_node.next
         return None  # Item not found
 
