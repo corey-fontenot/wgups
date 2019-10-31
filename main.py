@@ -8,12 +8,22 @@ from wgups.package import Package
 from data_structures.hashtable import HashTable
 
 packages = HashTable(120)
-# Read package data from csv file and load into program
+
+# Get configuration data
 parser = ConfigParser()
 parser.read("config.ini")
 
+# Application Constants
+START_OF_DAY = parser.get("application", "start_of_day")
+END_OF_DAY = parser.get("application", "end_of_day")
+PACKAGE_FILE = parser.get("files", "package_file")
+NUM_TRUCKS = parser.get("trucks", "num_trucks")
+NUM_DRIVERS = parser.get("trucks", "num_drivers")
+PACKAGES_PER_TRUCK = parser.get("trucks", "packages_per_truck")
+TRUCK_MPH = parser.get("trucks", "truck_mph")
+
 # Read package data from file
-with open(parser.get("files", "package_file"), 'r') as f:
+with open(PACKAGE_FILE, 'r') as f:
     reader = csv.reader(f)
     for row in reader:
 
@@ -23,9 +33,8 @@ with open(parser.get("files", "package_file"), 'r') as f:
         # If deadline is EOD convert to time for end of day
         deadline = row[5]
         if deadline == "EOD":
-            deadline = parser.get("application", "end_of_day")
+            deadline = END_OF_DAY
 
         # Create package object and insert into hashtable
         package = Package(int(row[0]), location, Clock.seconds_since_start(deadline), float(row[6]), row[7])
         packages.insert(package)
-
