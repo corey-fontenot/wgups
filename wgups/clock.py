@@ -171,7 +171,7 @@ class Clock:
         """
         Convert time string to number of seconds since start time
         :param time: time string in format: HH:MM AM/PM to be converted
-        :start_time: the method counts the number of seconds from this time
+        :param start_time: the method counts the number of seconds from this time
         :return: number of seconds since start time
         """
 
