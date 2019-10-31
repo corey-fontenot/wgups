@@ -184,3 +184,6 @@ class Package:
         result = (f"{self.package_id}: Address: {self.location} Mass: {self.mass} Deadline: {self.deadline}" +
                   f" Status: {self.status} Inst: {special_instructions}\n")
         return result
+
+    def __eq__(self, other):
+        return self._package_id == other.package_id
