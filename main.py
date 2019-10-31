@@ -36,5 +36,5 @@ with open(PACKAGE_FILE, 'r') as f:
             deadline = END_OF_DAY
 
         # Create package object and insert into hashtable
-        package = Package(int(row[0]), location, Clock.seconds_since_start(deadline), float(row[6]), row[7])
+        package = Package(int(row[0]), location, Clock.seconds_since_start(deadline, START_OF_DAY), float(row[6]), row[7])
         packages.insert(package)
