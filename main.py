@@ -6,7 +6,7 @@ from wgups.clock import Clock
 from wgups.location import Location
 from wgups.package import Package
 from data_structures.hashtable import HashTable
-from data_structures.graph import Vertex, Graph
+from data_structures.graph import Graph
 
 packages = HashTable(120)
 locations = Graph()
