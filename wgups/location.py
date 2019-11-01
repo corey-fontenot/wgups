@@ -2,7 +2,7 @@ class Location:
     """
     Represents a package location (address)
     """
-    def __init__(self, address, city, state, zipcode):
+    def __init__(self, address, city, state, zipcode, name=""):
         """
         Creates a Location object
         :param address: location address
@@ -14,6 +14,7 @@ class Location:
         self.city = city
         self.state = state
         self.zipcode = zipcode
+        self.name = name
 
     def __str__(self):
         """
