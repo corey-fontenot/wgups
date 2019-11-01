@@ -21,3 +21,6 @@ class Location:
         :return: string representation of theobject
         """
         return f"{self.address}, {self.city}, {self.state}, {self.zipcode}"
+
+    def __eq__(self, other):
+        return self.address == other.address and self.zipcode == other.zipcode
