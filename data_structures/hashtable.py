@@ -23,6 +23,16 @@ class HashTable:
         # Initialize table with EMPTY_SINCE_START buckets
         self.table = [self.EMPTY_SINCE_START] * initial_capacity
 
+        self._num_items = 0
+
+    @property
+    def num_items(self):
+        """
+        Read-only property to get number of items in table
+        :return: number of items in table
+        """
+        return self._num_items
+
     def hash(self, key):
         """
         Returns a hash of the provided key
@@ -48,12 +58,21 @@ class HashTable:
         :param item to be inserted, item must have a key attribute for hashing
         :return True if item is inserted, False otherwise
         """
+        if not hasattr(item, "key"):
+            return False
+
         bucket = self.hash(item.key) % len(self.table)
         buckets_probed = 0
         while buckets_probed < len(self.table):
             if type(self.table[bucket]) is EmptyBucket:
                 # Bucket is empty, insert item
                 self.table[bucket] = item
+                self._num_items += 1
+
+                # If hashtable has a load factor greater than 0.75, resize table
+                if self.num_items / len(self.table) > 0.75:
+                    self._resize()
+
                 return True
 
             # Bucket full continue probing with next bucket in the table
@@ -75,8 +94,9 @@ class HashTable:
         bucket = self.hash(key) % len(self.table)
         buckets_probed = 0
         while self.table[bucket] is not self.EMPTY_SINCE_START and buckets_probed < len(self.table):
-            if self.table[bucket].key == key:
+            if type(self.table[bucket]) != EmptyBucket and self.table[bucket].key == key:
                 self.table[bucket] = self.EMPTY_AFTER_REMOVAL
+                self._num_items -= 1
                 # Item found and removed
                 return True
 
@@ -100,7 +120,7 @@ class HashTable:
         while self.table[bucket] is not self.EMPTY_SINCE_START and buckets_probed < len(self.table):
 
             # Item was found
-            if type(self.table[bucket]) is not EmptyBucket and self.table[bucket].key == key:
+            if type(self.table[bucket]) != EmptyBucket and self.table[bucket].key == key:
                 return self.table[bucket]
 
             # bucket was occupied, keep probing
@@ -109,6 +129,20 @@ class HashTable:
 
         # Item not found
         return None
+
+    def _resize(self):
+        """
+        Resize table to make more room for new items
+
+        Worst Case Runtime Complexity: O(N)
+        Best Case Runtime Complexity: O(N)
+        :return: None
+        """
+        temp = self.table
+        self.table = [self.EMPTY_SINCE_START] * (len(self.table) * 2)
+
+        for item in temp:
+            self.insert(item)
 
     def __iter__(self):
         return HashTableIterator(self)
