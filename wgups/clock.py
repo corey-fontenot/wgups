@@ -175,9 +175,6 @@ class Clock:
         :return: number of seconds since start time
         """
 
-        parser = ConfigParser()
-        parser.read("config.ini")
-
         # initialize num_seconds to zero
         num_seconds = 0
 
