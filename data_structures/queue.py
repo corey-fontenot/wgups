@@ -28,7 +28,7 @@ class Queue:
         Remove an item from the beginning of queue and return it
         :return: Removed item
         """
-        popped_item = self._queue.head
+        popped_item = self._queue.head.data
         self._queue.remove_after(0)
 
         return popped_item
