@@ -1,4 +1,5 @@
 from data_structures.graph import Graph
+from .location import Location
 from .clock import Clock
 
 
@@ -6,13 +7,15 @@ class Truck:
     """
     Truck class to hold packages and deliver to destination
     """
-    def __init__(self, truck_id, package_limit, speed, start_of_day):
+    def __init__(self, truck_id, package_limit, speed, start_of_day, hub_location):
         """
         Create Truck Object
         :param truck_id: id of the truck :int
         :param package_limit: maximum number of packages truck can hold :int
         :param speed: speed of truck in miles per hour :int
         :param start_of_day: time of start of day :str
+        :param hub_location: location of hub :Location
+        :return: Truck Object
         """
         self._id = truck_id
         self._package_limit = package_limit
@@ -20,6 +23,7 @@ class Truck:
         self._locations = Graph()
         self._packages = []
         self._start_of_day = Clock.parse_time_string(start_of_day)
+        self._locations.add_vertex(hub_location.name, hub_location)
 
     @property
     def truck_id(self):
@@ -69,9 +73,33 @@ class Truck:
         """
         Add package to truck
         :param package: package to be added :Package
-        :return: None
+        :return: Void
         """
         self._packages.append(package)
+
+    def set_locations(self, locations_graph):
+        """
+        Populate _locations graph with package locations and set edges for the graph
+        :param locations_graph: Graph with locations data for all locations
+        :return: Void
+        """
+        for package in self._packages:
+            found_vertices = [x for x in locations_graph.get_vertex_list()
+                              if x.data == package.location]
+            if len(found_vertices) > 0:
+                if found_vertices[0].data not in map(lambda x: x.data, self._locations.get_vertex_list()):
+                    self._locations.add_vertex(found_vertices[0].data.name, found_vertices[0].data)
+
+        for location in map(lambda x: x.data, self._locations.get_vertex_list()):
+            # index in truck graph
+            index = self._locations.get_vertex_list().index(self._locations.get_vertex(location.name))
+
+            # index in graph of all locations
+            all_locations_index = locations_graph.get_vertex_list().index(locations_graph.get_vertex(location.name))
+
+            for num, loc in enumerate(map(lambda x: x.data, self._locations.get_vertex_list())):
+                cur_index = locations_graph.get_vertex(loc.name).index
+                self._locations.adjacency_matrix[index][num] = locations_graph.adjacency_matrix[all_locations_index][cur_index]
 
     def deliver_package(self, package):
         """
