@@ -5,8 +5,10 @@ from configparser import ConfigParser
 from wgups.clock import Clock
 from wgups.location import Location
 from wgups.package import Package
+from wgups.truck import Truck
 from data_structures.hashtable import HashTable
 from data_structures.graph import Graph
+from data_structures.queue import Queue
 
 packages = HashTable(120)
 locations = Graph()
@@ -20,10 +22,10 @@ START_OF_DAY = parser.get("application", "start_of_day")
 END_OF_DAY = parser.get("application", "end_of_day")
 PACKAGE_FILE = parser.get("files", "package_file")
 DISTANCE_TABLE = parser.get("files", "distance_table")
-NUM_TRUCKS = parser.get("trucks", "num_trucks")
-NUM_DRIVERS = parser.get("trucks", "num_drivers")
-PACKAGES_PER_TRUCK = parser.get("trucks", "packages_per_truck")
-TRUCK_MPH = parser.get("trucks", "truck_mph")
+NUM_TRUCKS = int(parser.get("trucks", "num_trucks"))
+NUM_DRIVERS = int(parser.get("trucks", "num_drivers"))
+PACKAGES_PER_TRUCK = int(parser.get("trucks", "packages_per_truck"))
+TRUCK_MPH = int(parser.get("trucks", "truck_mph"))
 
 # Read package data from file
 with open(PACKAGE_FILE, 'r') as f:
@@ -48,11 +50,27 @@ with open(DISTANCE_TABLE, 'r') as f:
     for row in reader:
         # Create a Location object
         location = Location(row[1], row[2], row[3], row[4], row[0])
-
         # Add location to temp_locations and to locations graph
         temp_locations.append(location)
         locations.add_vertex(location.name, location)
 
         # Add undirected edge to graph with each distance value
         for index, distance in enumerate(row[5:]):
-            locations.add_undirected_edge(location.name, temp_locations[index].name, float(distance))
+            vertex_a = locations.get_vertex(location.name)
+            vertex_b = locations.get_vertex(temp_locations[index].name)
+            locations.add_undirected_edge(vertex_a , vertex_b, float(distance))
+
+# Create trucks
+# Added in the order they will leave
+truck_list = []
+for truck_id in range(1, NUM_TRUCKS + 1):
+    truck_list.append(Truck(truck_id, PACKAGES_PER_TRUCK, TRUCK_MPH, START_OF_DAY, locations.get_vertex_by_index(0).data))
+
+# Queue trucks to leave hub
+truck_queue = Queue()
+for truck in Truck.sort_into_trucks([x for x in packages], truck_list, START_OF_DAY, END_OF_DAY):
+    # Add location data for packages in truck
+    truck.set_locations(locations)
+
+    # Add truck to truck queue
+    truck_queue.push(truck)
