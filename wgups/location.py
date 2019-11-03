@@ -19,7 +19,7 @@ class Location:
     def __str__(self):
         """
         Returns a string representation of the object
-        :return: string representation of theobject
+        :return: string representation of the object
         """
         return f"{self.address}, {self.city}, {self.state}, {self.zipcode}"
 
