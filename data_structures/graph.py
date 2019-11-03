@@ -28,7 +28,14 @@ class Graph:
     def __init__(self):
         self.adjacency_matrix = []
         self.vertex_list = []
-        self.last_index = None
+
+    @property
+    def size(self):
+        """
+        Returns size of graph
+        :return: size of graph :int
+        """
+        return len(self.vertex_list)
 
     def add_vertex(self, label, data=None):
         """
@@ -41,11 +48,7 @@ class Graph:
         Best Case Runtime Complexity: O(N)
         """
         new_vertex = Vertex(label, data)
-        if self.last_index is None:
-            self.last_index = 0
-        else:
-            self.last_index += 1
-        new_vertex.index = self.last_index
+        new_vertex.index = len(self.vertex_list)
 
         self.vertex_list.append(new_vertex)
 
@@ -56,49 +59,41 @@ class Graph:
         for entry in range(0, new_vertex.index):
             self.adjacency_matrix[entry].append(0)
 
-    def add_undirected_edge(self, label_a, label_b, weight=1):
+    def add_undirected_edge(self, vertex_a, vertex_b, weight=1):
         """
         Adds an undirected edge to the graph
         Returns if either of the provided vertices is not in the graph
-        :param label_a: label of the first vertex
-        :param label_b: label of the second vertex
+        :param vertex_a: first vertex
+        :param vertex_b: second vertex
         :param weight: optional weight, default value is 1
         :return: None
 
         Worst Case Runtime Complexity: O(N)
         Best Case Runtime Complexity: O(1)
         """
-        vertex_a = self.get_vertex(label_a)
-        vertex_b = self.get_vertex(label_b)
-
-        if vertex_a is None or vertex_b is None:
+        if vertex_a not in self.vertex_list or vertex_b not in self.vertex_list:
             return
 
         self.adjacency_matrix[vertex_a.index][vertex_b.index] = weight
         self.adjacency_matrix[vertex_b.index][vertex_a.index] = weight
 
-    def add_directed_edge(self, source_label, destination_label, weight=1):
+    def add_directed_edge(self, source, destination, weight=1):
         """
         Add a directed edge to the graph
         Returns if either of the provided vertices is not in graph
-        :param source_label: label of the source vertex
-        :param destination_label: label of the destination vertex
+        :param source: source vertex
+        :param destination: destination vertex
         :param weight: optional edge weigh, default value is 1
         :return: None
 
         Worst Case Runtime Complexity: O(N)
         Best Case Runtime Complexity: O(1)
         """
-        source_vertex = None
-        destination_vertex = None
 
-        source_vertex = self.get_vertex(source_label)
-        destination_vertex = self.get_vertex(destination_label)
-
-        if source_vertex is None or destination_vertex is None:
+        if source not in self.vertex_list or destination not in self.vertex_list:
             return
 
-        self.adjacency_matrix[source_vertex.index][destination_vertex.index] = weight
+        self.adjacency_matrix[source.index][destination.index] = weight
 
     def get_vertex(self, vertex_label):
         """
@@ -114,28 +109,51 @@ class Graph:
                 return vertex
         return None
 
-    def get_adjacent_vertices(self, vertex_label):
+    def get_vertex_list(self):
+        """
+        Returns list of vertices in the graph
+        :return: list of vertices in the graph :List<Vertex>
+        """
+        return self.vertex_list
+
+    def get_vertex_by_index(self, vertex_index):
+        """
+        Get vertex by ID
+        :param vertex_index: index to look for :int
+        :return: vertex with given id :Vertex
+
+        Worst Case Runtime Complexity: O(N)
+        Best Case Runtime Complexity: O(1)
+        """
+        for vertex in self.vertex_list:
+            if vertex.index == vertex_index:
+                return vertex
+        return None
+
+    def get_adjacent_vertices(self, start_vertex):
         """
         Get all vertices adjacent to provided vertex
-        :param vertex_label: label of provided vertex
+        :param start_vertex: vertex to get adjacent vertices of
         :return: List containing all adjacent vertices,
                 Empty List if no adjacent vertices or provided vertex not found :List
 
         Worst Case Runtime Complexity: O(N)
         Best Case Runtime Complexity: O(N)
         """
-        start_vertex = self.get_vertex(vertex_label)
         result = []
-        if start_vertex is None:
+        if start_vertex not in self.vertex_list:
             return result
-        for vertex in self.vertex_list:
-            if vertex.label == vertex_label:
-                start_vertex = vertex
 
         for num, entry in enumerate(self.adjacency_matrix[start_vertex.index]):
             if entry != 0:
                 result.append(self.vertex_list[num])
         return result
+
+    def contains(self, vertex_label):
+        if self.get_vertex(vertex_label) is not None:
+            return True
+        else:
+            return False
 
     def print_adjacency_matrix(self):
         """
@@ -147,3 +165,4 @@ class Graph:
         """
         for row in self.adjacency_matrix:
             print(row)
+
