@@ -155,6 +155,15 @@ class Graph:
         else:
             return False
 
+    def get_edge_weight(self, source, destination):
+        """
+        Get the edge weight from source vertex to destination vertex
+        :param source: source vertex
+        :param destination: destination vertex
+        :return: edge weight :float
+        """
+        return self.adjacency_matrix[source.index][destination.index]
+
     def print_adjacency_matrix(self):
         """
         Print the adjacency matrix
