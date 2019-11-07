@@ -145,7 +145,7 @@ class Graph:
             return result
 
         for num, entry in enumerate(self.adjacency_matrix[start_vertex.index]):
-            if entry != 0:
+            if entry > 0:
                 result.append(self.vertex_list[num])
         return result
 
