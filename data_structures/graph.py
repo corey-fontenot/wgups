@@ -164,6 +164,53 @@ class Graph:
         """
         return self.adjacency_matrix[source.index][destination.index]
 
+    def calculate_tour(self, start_vertex):
+        """
+        Calculate tour based on nearest neighbor
+        The next vertex is the vertex closest to current vertex
+        :param start_vertex:
+        :return: Queue of vertices to visit
+
+        Worst Case Runtime Complexity: O(N^2)
+        Best Case Runtime Complexity: O(N^2)
+        """
+
+        # Worst Case Runtime Complexity: O(1)
+        # Best Case Runtime Complexity: O(1)
+        route = Queue()
+        unvisited = []
+
+        # Worst Case Runtime Complexity: O(N)
+        # Best Case Runtime Complexity: O(N)
+        for unvisited_vertex in self.vertex_list:
+            unvisited.append(unvisited_vertex)
+
+        # Worst Case Runtime Complexity: O(1)
+        # Best Case Runtime Complexity: O(1)
+        current_vertex = start_vertex
+        unvisited.remove(current_vertex)
+        route.push(current_vertex)
+
+        # Worst Case Runtime Complexity: O(N^2)
+        # Best Case Runtime Complexity: O(N^2)
+        while len(unvisited) > 0:
+            closest_vertex = None
+            for candidate in unvisited:
+                if closest_vertex is None:
+                    closest_vertex = candidate
+                if self.get_edge_weight(current_vertex, candidate) < self.get_edge_weight(current_vertex, closest_vertex):
+                    closest_vertex = candidate
+
+            current_vertex = closest_vertex
+            route.push(closest_vertex)
+            unvisited.remove(closest_vertex)
+
+        # Worst Case Runtime Complexity: O(1)
+        # Best Case Runtime Complexity: O(1)
+        route.push(start_vertex)
+
+        return route
+
     def print_adjacency_matrix(self):
         """
         Print the adjacency matrix
