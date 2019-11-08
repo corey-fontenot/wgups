@@ -1,5 +1,5 @@
-from data_structures.graph import Graph
-from .location import Location
+from data_structures.graph import Graph, Vertex
+from data_structures.queue import Queue
 from .clock import Clock
 
 
@@ -24,6 +24,7 @@ class Truck:
         self._packages = []
         self._start_of_day = Clock.parse_time_string(start_of_day)
         self._locations.add_vertex(hub_location.name, hub_location)
+        self._route = None
 
     @property
     def truck_id(self):
@@ -108,6 +109,18 @@ class Truck:
         :return: package ID of package removed :int
         """
         return self._packages.pop(self._packages.index(package)).package_id
+
+    def find_route(self):
+        """
+        Calculate delivery route
+        :return: Void
+
+        Worst Case Runtime Complexity: O(N^2)
+        Best Case Runtime Complexity: O(N^2)
+        """
+        # Worst Case Runtime Complexity: O(N^2)
+        # Best Case Runtime Complexity: O(N^2)
+        self._route = self._locations.calculate_tour(self._locations.get_vertex_list()[0])
 
     @staticmethod
     def sort_into_trucks(packages, trucks, start_of_day, end_of_day):
