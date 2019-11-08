@@ -177,6 +177,19 @@ class Package:
         # return True if _special_instructions has a non-empty value
         return True
 
+    def print(self, start_time):
+        print()
+        print("Package ID:", self._package_id)
+        print("\tAddress:", self.location)
+        print("\tMass:", self.mass)
+        print("\tDeadline:", Clock.to_time_string(self.deadline, start_time))
+        print("\tStatus:", self.status)
+        if not self.special_instructions:
+            print("\tSpecial Instructions:", "None")
+        else:
+            print("\tSpecial Instructions:", self.special_instructions)
+        print()
+
     def __str__(self):
         special_instructions = self._special_instructions
         if not special_instructions:
