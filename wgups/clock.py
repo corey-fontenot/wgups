@@ -1,6 +1,3 @@
-from configparser import ConfigParser
-
-
 class Clock:
 
     def __init__(self, time, start_of_day):
@@ -44,38 +41,45 @@ class Clock:
             minute_str = "0" + minute_str
         return f"{hour}:{minute_str} {am_pm}"
 
+    def advance_time(self):
+        """
+        Advance time by 1 second
+        :return: Void
+        """
+        self._time += 1
+
     def forward_seconds(self, seconds):
         """
-        Move clock forward by given number of seconds
+        Calculate time after given number of seconds
         :param seconds: number of seconds to move clock forward
-        :return: none
+        :return: time
 
         Worst Case Runtime Complexity: O(1)
         Best Case Runtime Complexity: O(1)
         """
-        self._time += seconds
+        return self.time + seconds
 
     def forward_minutes(self, minutes):
         """
-        Move clock forward by given number of minutes
+        Calculat time after given number of minutes
         :param minutes: number of minutes to move clock forward
         :return: none
 
         Worst Case runtime complexity: O(1)
         Best Case runtime complexity: O(1)
         """
-        self._time += minutes * 60
+        return self.time + (minutes * 60)
 
     def forward_hours(self, hours):
         """
-        Move clock forward by given number of hours
+        Calculate time after given number of hours
         :param hours: number of hours to move the clock forward
         :return: none
 
         Worst Case Runtime Complexity: O(1)
         Best Case Runtime Complexity: O(1)
         """
-        self._time += hours * 60 * 60
+        return self.time + (hours * 60 * 60)
 
     def forward_time(self, hours, minutes, seconds):
         """
