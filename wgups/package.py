@@ -25,6 +25,7 @@ class Package:
         self._mass = mass
         self._special_instructions = special_instructions
         self._status = status
+        self.time_delivered = None
 
     # read-only package id
     @property
@@ -188,6 +189,8 @@ class Package:
             print("\tSpecial Instructions:", "None")
         else:
             print("\tSpecial Instructions:", self.special_instructions)
+        if self.time_delivered is not None:
+            print("\tTime Delivered:", Clock.to_time_string(self.time_delivered, start_time))
         print()
 
     def __str__(self):
