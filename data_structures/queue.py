@@ -38,4 +38,4 @@ class Queue:
         Return item from beginning of the queue without removing it
         :return: Item at beginning of the queue
         """
-        return self._queue.head
+        return self._queue.head.data
