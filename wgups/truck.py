@@ -19,12 +19,16 @@ class Truck:
         """
         self._id = truck_id
         self._package_limit = package_limit
-        self._speed = speed
+        self._speed = (speed / 60) / 60  # truck speed in miles per second
         self._locations = Graph()
         self._packages = []
-        self._start_of_day = Clock.parse_time_string(start_of_day)
+        self._start_of_day = start_of_day
         self._locations.add_vertex(hub_location.name, hub_location)
-        self._route = None
+        self._route = Queue()
+        self._departure_time = None  # departure time in seconds since start
+        self._distance_traveled = 0.0
+        self._next_location = None
+        self._route_done = False
 
     @property
     def truck_id(self):
@@ -35,6 +39,14 @@ class Truck:
         return self._id
 
     @property
+    def distance_traveled(self):
+        """
+        Read-only distance traveled. Cannot be set outside of class
+        :return: distance traveled :float
+        """
+        return self._distance_traveled
+
+    @property
     def package_limit(self):
         """
         Read-only truck package limit. Cannot be changed after Object creation
@@ -42,12 +54,41 @@ class Truck:
         """
         return self._package_limit
 
+    @property
+    def next_location(self):
+        return self._next_location
+
+    def get_next_location(self, time):
+        if not self._route.is_empty():
+            self._next_location = self._route.pop()
+        else:
+            self._route_done = True
+            print(f"{Clock.to_time_string(time, self._start_of_day)}: "
+                  f"Truck {self.truck_id} finished route ({self.distance_traveled:.2f} miles driven)")
+
+    def start_route(self, time):
+        self._next_location = self._route.pop()
+        for package in self._packages:
+            package.status = "EN ROUTE"
+        self._departure_time = time
+        self._next_location = self._route.pop()
+        print(f"{Clock.to_time_string(time, self._start_of_day)}: Truck {self.truck_id} leaving Hub")
+
     def get_package_count(self):
         """
         Return the number of packages currently on the truck
         :return: number of packages on truck :int
         """
         return len(self._packages)
+
+    def move_truck(self):
+        if not self._route_done:
+            self._distance_traveled += self._speed
+            return self._speed
+        return 0
+
+    def is_route_done(self):
+        return self._route_done
 
     def get_package_list(self):
         """
@@ -85,11 +126,11 @@ class Truck:
         :return: Void
         """
         for package in self._packages:
-            found_vertices = [x for x in locations_graph.get_vertex_list()
-                              if x.data == package.location]
-            if len(found_vertices) > 0:
-                if found_vertices[0].data not in map(lambda x: x.data, self._locations.get_vertex_list()):
-                    self._locations.add_vertex(found_vertices[0].data.name, found_vertices[0].data)
+            if package.location not in map(lambda x: x.data, self._locations.get_vertex_list()):
+                for vertex in locations_graph.get_vertex_list():
+                    if vertex.data == package.location:
+                        self._locations.add_vertex(vertex.data.name, vertex.data)
+                        break
 
         for location in map(lambda x: x.data, self._locations.get_vertex_list()):
             # index in truck graph
@@ -110,6 +151,13 @@ class Truck:
         """
         return self._packages.pop(self._packages.index(package)).package_id
 
+    def deliver_packages(self, location):
+        delivered_packages = []
+        for package in filter(lambda x: x.location == location, self._packages):
+            delivered_packages.append(self.deliver_package(package))
+
+        return delivered_packages
+
     def find_route(self):
         """
         Calculate delivery route
@@ -120,7 +168,16 @@ class Truck:
         """
         # Worst Case Runtime Complexity: O(N^2)
         # Best Case Runtime Complexity: O(N^2)
-        self._route = self._locations.calculate_tour(self._locations.get_vertex_list()[0])
+        route = self._locations.calculate_tour(self._locations.get_vertex_list()[0])
+        start = route.peek()
+        total_distance = 0.0
+        last_location = start
+        while not route.is_empty():
+            current_location = route.pop()
+            distance = self._locations.get_edge_weight(last_location, current_location)
+            total_distance += distance
+            self._route.push((current_location, total_distance))
+            last_location = current_location
 
     @staticmethod
     def sort_into_trucks(packages, trucks, start_of_day, end_of_day):
