@@ -1,19 +1,41 @@
 import sys
 import time
 from wgups.clock import Clock
+from wgups.truck import Truck
+from data_structures.hashtable import HashTable
+from data_structures.queue import Queue
+from data_structures.graph import Graph
 
 
 class Simulation:
-    def __init__(self, start_time, packages, trucks, delayed_flight_time):
+    def __init__(self, start_time, delayed_flight_time, table_size):
         self._start_time = start_time
         self._clock = Clock(0, start_time)
-        self._packages = packages
-        self._trucks = trucks
+        self._packages = HashTable(table_size)
         self._active_trucks = []
+        self._trucks = Queue()
         self.simulation_over = False
         self._delayed_flight_time = Clock.seconds_since_start(delayed_flight_time, start_time)
         self._delayed_packages_departed = False
         self._total_miles = 0.0
+        self.locations = Graph()
+
+    def add_package(self, package):
+        self._packages.insert(package)
+
+    def setup(self, num_trucks, packages_per_truck, truck_mph, start_of_day, end_of_day):
+        truck_list = []
+        for truck_id in range(1, num_trucks + 1):
+            truck_list.append(Truck(truck_id, packages_per_truck, truck_mph, start_of_day, self.locations.get_vertex_by_index(0).data))
+
+        truck_queue = Queue()
+        for truck in Truck.sort_into_trucks([x for x in self._packages], truck_list, start_of_day, end_of_day):
+            # Add location data for packages in truck
+            truck.set_locations(self.locations)
+            truck.find_route()
+
+            # Add truck to truck queue
+            self._trucks.push(truck)
 
     def main_menu(self):
         selection = 0
@@ -133,9 +155,11 @@ class Simulation:
 
                 # if truck distance is greater or equal to distance to next location
                 if truck.distance_traveled >= truck.next_location[1]:
-
+                    if truck.truck_id == 3:
+                        print(truck.next_location[0])
                     # deliver packages for current location
-                    for package_id in truck.deliver_packages(truck.next_location[0].data):
+                    delivered_packages = truck.deliver_packages(truck.next_location[0].data)
+                    for package_id in delivered_packages:
 
                         # set status of delivered package to delivered
                         self._packages.search(package_id).status = "DELIVERED"

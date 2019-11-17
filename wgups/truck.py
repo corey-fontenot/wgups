@@ -153,8 +153,10 @@ class Truck:
 
     def deliver_packages(self, location):
         delivered_packages = []
-        for package in filter(lambda x: x.location == location, self._packages):
-            delivered_packages.append(self.deliver_package(package))
+
+        for package in self.get_package_list():
+            if package.location == location:
+                delivered_packages.append(self.deliver_package(package))
 
         return delivered_packages
 
