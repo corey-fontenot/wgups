@@ -155,20 +155,20 @@ class Simulation:
 
                 # if truck distance is greater or equal to distance to next location
                 if truck.distance_traveled >= truck.next_location[1]:
-                    if truck.truck_id == 3:
-                        print(truck.next_location[0])
-                    # deliver packages for current location
-                    delivered_packages = truck.deliver_packages(truck.next_location[0].data)
-                    for package_id in delivered_packages:
 
+                    # deliver packages for current location
+                    #delivered_packages = truck.deliver_packages(truck.next_location[0].data)
+                    delivered_packages = [x for x in truck.get_package_list() if x.location == truck.next_location[0].data]
+                    for package in delivered_packages:
+                        truck.deliver_package(package)
                         # set status of delivered package to delivered
-                        self._packages.search(package_id).status = "DELIVERED"
+                        self._packages.search(package.package_id).status = "DELIVERED"
 
                         # set time delivered for delivered package to current time
-                        self._packages.search(package_id).time_delivered = self._clock.time
+                        self._packages.search(package.package_id).time_delivered = self._clock.time
 
                         # Display information about current delivery
-                        print(f"{Clock.to_time_string(self._clock.time, self._start_time)} : Package {package_id} "
+                        print(f"{Clock.to_time_string(self._clock.time, self._start_time)} : Package {package.package_id} "
                               f"delivered to {truck.next_location[0].data.name}, {truck.next_location[0].data}")
 
                         # wait a short time so that delivery activity can be read more easily
