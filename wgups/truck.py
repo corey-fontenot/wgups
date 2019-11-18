@@ -27,6 +27,7 @@ class Truck:
         self._route = Queue()
         self._departure_time = None  # departure time in seconds since start
         self._distance_traveled = 0.0
+        self._current_location = None
         self._next_location = None
         self._route_done = False
 

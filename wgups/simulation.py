@@ -2,6 +2,7 @@ import sys
 import time
 from wgups.clock import Clock
 from wgups.truck import Truck
+from wgups.location import Location
 from data_structures.hashtable import HashTable
 from data_structures.queue import Queue
 from data_structures.graph import Graph
@@ -19,6 +20,7 @@ class Simulation:
         self._delayed_packages_departed = False
         self._total_miles = 0.0
         self.locations = Graph()
+        self.wrong_address_fixed = False
 
     def add_package(self, package):
         self._packages.insert(package)
@@ -147,6 +149,12 @@ class Simulation:
             # advance time forward
             self._clock.advance_time()
 
+            if self._clock.time >= Clock.seconds_since_start("10:20 AM", self._start_time) \
+                    and not self.wrong_address_fixed:
+                new_location = Location("410 S State St", "Salt Lake City", "UT", "84111", "")
+                self._packages.search(9).location = new_location
+                self.wrong_address_fixed = True
+
             # for each truck update truck and package data
             for truck in self._active_trucks:
 
@@ -157,7 +165,6 @@ class Simulation:
                 if truck.distance_traveled >= truck.next_location[1]:
 
                     # deliver packages for current location
-                    #delivered_packages = truck.deliver_packages(truck.next_location[0].data)
                     delivered_packages = [x for x in truck.get_package_list() if x.location == truck.next_location[0].data]
                     for package in delivered_packages:
                         truck.deliver_package(package)
