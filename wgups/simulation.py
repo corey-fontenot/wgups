@@ -154,6 +154,7 @@ class Simulation:
                 new_location = Location("410 S State St", "Salt Lake City", "UT", "84111", "")
                 self._packages.search(9).location = new_location
                 self.wrong_address_fixed = True
+                print(f"{Clock.to_time_string(self._clock.time, self._start_time)} : Package 9 address changed to {new_location}")
 
             # for each truck update truck and package data
             for truck in self._active_trucks:
