@@ -174,22 +174,10 @@ class Truck:
             last_location = current_location
 
     @staticmethod
-    def sort_into_trucks(packages, trucks, start_of_day, end_of_day):
-        """
-        Sort package into correct truck
-        :param packages: list of unsorted packages :List<Packages>
-        :param trucks: list of unloaded trucks :List<Trucks>
-        :param start_of_day: time of start of day
-        :param end_of_day: time of end of day
-        :return: list of trucks with packages loaded :List<Trucks>
-        """
-
-        # Load all packages that must be on same truck onto first truck
-        # Worst Case Runtime Complexity: O(N^2)
-        # Best Case Runtime Complexity: O(N^2)
+    def sort_packages(packages, trucks, start_of_day, end_of_day):
+        # Load packages that must be on same truck onto truck 1 along with any packages with same address
         same_truck_packages = []
         for package in filter(lambda x: x.special_instructions.startswith("Must be delivered with"), packages):
-            # length of "Must be delivered with " is 23
             deliver_with = package.special_instructions[23:].split(", ")
             if package not in same_truck_packages:
                 same_truck_packages.append(package)
@@ -198,13 +186,23 @@ class Truck:
                 if cur_package not in same_truck_packages:
                     same_truck_packages.append(cur_package)
 
+        same_locations = []
         for package in same_truck_packages:
+            if package.location not in same_locations:
+                same_locations.append(package.location)
             trucks[0].load_package(package)
             packages.remove(package)
 
-        # Load remaining packages that have special instructions
-        # Worst Case Runtime Complexity: O(N)
-        # Best Case Runtime Complexity: O(N)
+        found_packages = []
+        for package in packages:
+            if package.location in same_locations and not package.has_special_instructions():
+                found_packages.append(package)
+
+        for package in found_packages:
+            trucks[0].load_package(package)
+            packages.remove(package)
+
+        # Load remaining packages with special instructions
         for package in filter(lambda x: x.has_special_instructions(), packages):
             if package.special_instructions == "Wrong address listed":
                 trucks[-1].load_package(package)
@@ -218,40 +216,20 @@ class Truck:
                 trucks[int(package.special_instructions[-1]) - 1].load_package(package)
                 packages.remove(package)
 
-        for package in filter(lambda x: x.deadline < Clock.seconds_since_start(end_of_day, start_of_day), packages):
-            trucks[0].load_package(package)
+        # Load packages with no deadline onto truck 3
+        no_deadline = []
+        for package in filter(lambda x: not x.deadline < Clock.seconds_since_start(end_of_day, start_of_day), packages):
+            no_deadline.append(package)
+
+        for package in no_deadline:
+            trucks[-1].load_package(package)
             packages.remove(package)
 
-        # find highest concentration of a particular zipcode for each truck
-        # add packages with same zipcode
-        # then add packages from remaining packages until truck is full or all packages are loaded
-        # Worst Case Runtime Complexity: O(N)
-        # Best Case Runtime Complexity: O(N)
-        for truck in trucks:
-            zipcodes = []
-            zipcode_count = []
-
-            while len(packages) > 0 and truck.get_package_count() < truck.package_limit:
-                for package in truck.get_package_list():
-                    if package.location.zipcode in zipcodes:
-                        index = zipcodes.index(package.location.zipcode)
-                        zipcode_count[index] += 1
-                    else:
-                        zipcodes.append(package.location.zipcode)
-                        zipcode_count.append(1)
-                highest_volume_zip = zipcodes[zipcode_count.index(max(zipcode_count))]
-                for package in filter(lambda x: x.location.zipcode == highest_volume_zip, packages):
-                    truck.load_package(package)
-                    packages.remove(package)
-
-                for package in packages:
-                    if truck.get_package_count() == truck.package_limit:
-                        break
-                    if package in packages:
-                        truck.load_package(package)
-                        packages.remove(package)
-
-                zipcodes = []
-                zipcode_count = []
+        current_truck = 0
+        while len(packages) > 0:
+            while current_truck < 3 and trucks[current_truck].get_package_count() < 16 and len(packages) > 0:
+                trucks[current_truck].load_package(packages[-1])
+                packages.remove(packages[-1])
+            current_truck += 1
 
         return trucks

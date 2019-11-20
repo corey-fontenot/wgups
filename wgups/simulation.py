@@ -31,7 +31,7 @@ class Simulation:
             truck_list.append(Truck(truck_id, packages_per_truck, truck_mph, start_of_day, self.locations.get_vertex_by_index(0).data))
 
         truck_queue = Queue()
-        for truck in Truck.sort_into_trucks([x for x in self._packages], truck_list, start_of_day, end_of_day):
+        for truck in Truck.sort_packages([x for x in self._packages], truck_list, start_of_day, end_of_day):
             # Add location data for packages in truck
             truck.set_locations(self.locations)
             truck.find_route()
