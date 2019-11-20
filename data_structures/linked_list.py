@@ -163,7 +163,7 @@ class LinkedList:
             if suc_node is None:
                 self.tail = None
 
-            self._length += 1
+            self._length -= 1
 
             # Successfully removed node
             return True
@@ -177,7 +177,7 @@ class LinkedList:
             if suc_node is None:
                 self.tail = cur_node
 
-            self._length += 1
+            self._length -= 1
 
             # Successfully removed node
             return True
