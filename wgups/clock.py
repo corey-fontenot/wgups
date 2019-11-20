@@ -195,6 +195,22 @@ class Clock:
         # return number of seconds since start
         return num_seconds
 
+    @staticmethod
+    def total_duration(time):
+        duration = time
+        hours = 0
+        minutes = 0
+
+        while duration >= 60 * 60:
+            duration -= (60 * 60)
+            hours += 1
+
+        while duration >= 60:
+            duration -= 60
+            minutes += 1
+
+        return hours, minutes, duration
+
     def __str__(self):
         """
         Returns a string representation of the object

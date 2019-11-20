@@ -81,6 +81,9 @@ class Simulation:
             package = self._packages.search(selection)
             package.print(self._start_time)
         elif selection == 2:
+            print()
+            print("---------------------------------------------------------------------------------------------------")
+            print(f"Time: {Clock.to_time_string(self._clock.time, self._start_time)}")
             for package in self._packages:
                 package.print(self._start_time)
         elif selection == 3:
@@ -121,6 +124,13 @@ class Simulation:
             truck.start_route(self._clock.time)
         while not self.simulation_over:
             self.main_menu()
+        print()
+        input("Press any key to print package data")
+        print()
+        print("-------------------------------------------------------------------------------------------------------")
+        print(f"Time: {Clock.to_time_string(self._clock.time, self._start_time)}")
+        for package in self._packages:
+            package.print(self._start_time)
 
     def print_summary(self):
         print(f"Total Distance: {self._total_miles:.2f} Miles")
@@ -141,6 +151,11 @@ class Simulation:
                 undelivered_packages += 1
                 package.print(self._start_time)
         print(f"Total Undelivered Packages: {undelivered_packages}")
+        print("-------------------------------------------------------------------------------------------------------")
+        print(f"Total distance traveled: {self._total_miles:.2f} miles")
+        print(f"Packages delivered: {self._packages.num_items}")
+        duration = Clock.total_duration(self._clock.time)
+        print(f"Duration: {duration[0]} Hours {duration[1]} Minutes {duration[2]} Seconds")
 
     def advance_simulation(self, time_amount):
         # Run simulation for amount of time selected in clock menu
@@ -205,10 +220,3 @@ class Simulation:
                 self.simulation_over = True
                 self.print_summary()
                 break
-
-        # Separator for better output readability
-        print("-------------------------------------------------------------------------------------------------------")
-
-        # Print data for each package
-        for package in self._packages:
-            package.print(self._start_time)
