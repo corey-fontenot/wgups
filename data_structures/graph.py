@@ -9,12 +9,22 @@ class Vertex:
         """
         Create a vertex
         :param label: vertex label
+
+        Worst Case Runtime Complexity: O(1)
+        Best Case Runtime Complexity: O(1)
         """
         self.label = label
         self.data = data
         self.index = None
 
     def __str__(self):
+        """
+        String representation of a vertex
+        :return: String representation of vertex :String
+
+        Worst Case Runtime Complexity: O(1)
+        Best Case Runtime Complexity: O(1)
+        """
         result = self.label
         if self.data is not None:
             result = f"{result}: {str(self.data)}"
@@ -24,8 +34,16 @@ class Vertex:
 class Graph:
     """
     Graph Data Structure
+
+    space complexity: O(N^2)
     """
     def __init__(self):
+        """
+        Create a graph object
+
+        Worst Case Runtime Complexity: O(1)
+        Best Case Runtime Complexity: O(1)
+        """
         self.adjacency_matrix = []
         self.vertex_list = []
 
@@ -34,6 +52,9 @@ class Graph:
         """
         Returns size of graph
         :return: size of graph :int
+
+        Worst Case Runtime Complexity: O(1)
+        Best Case Runtime Complexity: O(1)
         """
         return len(self.vertex_list)
 
@@ -113,6 +134,9 @@ class Graph:
         """
         Returns list of vertices in the graph
         :return: list of vertices in the graph :List<Vertex>
+
+        Worst Case Runtime Complexity: O(1)
+        Best Case Runtime Complexity: O(1)
         """
         return self.vertex_list
 
@@ -161,6 +185,9 @@ class Graph:
         :param source: source vertex
         :param destination: destination vertex
         :return: edge weight :float
+
+        Worst Case Runtime Complexity: O(1)
+        Best Case Runtime Complexity: O(1)
         """
         return self.adjacency_matrix[source.index][destination.index]
 
@@ -177,7 +204,10 @@ class Graph:
 
         # Worst Case Runtime Complexity: O(1)
         # Best Case Runtime Complexity: O(1)
+        # Once the order is determined, it is saved into a queue
         route = Queue()
+
+        # vertices that have not been visited yet
         unvisited = []
 
         # Worst Case Runtime Complexity: O(N)

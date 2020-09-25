@@ -1,4 +1,6 @@
 # Corey Fontenot #001027553
+# runtime complexity: O(N^2)
+# space complexity: O(N^2)
 
 import csv
 from configparser import ConfigParser

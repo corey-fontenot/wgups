@@ -5,6 +5,8 @@ class EmptyBucket:
 class HashTable:
     """
     Hashtable using Linear Probing for collision resolution
+
+    Space complexity: O(N)
     """
     def __init__(self, initial_capacity=10):
         """
@@ -30,6 +32,9 @@ class HashTable:
         """
         Read-only property to get number of items in table
         :return: number of items in table
+
+        Worst Case Runtime Complexity: O(1)
+        Best Case Runtime Complexity: O(1)
         """
         return self._num_items
 
@@ -57,6 +62,9 @@ class HashTable:
 
         :param item to be inserted, item must have a key attribute for hashing
         :return True if item is inserted, False otherwise
+
+        Worst Case Runtime Complexity: O(N) (Only when table is resized)
+        Best Case Runtime Complexity: O(1)
         """
         if not hasattr(item, "key"):
             return False
@@ -170,6 +178,9 @@ class HashTableIterator:
         """
         Create HashTableIterator Object
         :param hashtable: hashtable being iterated over
+
+        Worst Case Runtime Complexity: O(1)
+        Best Case Runtime Complexity: O(1)
         """
         self._hashtable = hashtable
 

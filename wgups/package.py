@@ -44,6 +44,9 @@ class Package:
         """
         Return key to be used when searching for a package
         :return: return package_id :int
+
+        Worst Case Runtime Complexity: O(1)
+        Best Case Runtime Complexity: O(1)
         """
         return self._package_id
 
@@ -179,6 +182,14 @@ class Package:
         return True
 
     def print(self, start_time):
+        """
+        Print package information
+        :param start_time: start time of simulation used to convert seconds since start to time string
+        :return: None
+
+        Worst Case Runtime Complexity: O(1)
+        Best Case Runtime Complexity: O(1)
+        """
         print()
         print("Package ID:", self._package_id)
         print("\tAddress:", self.location)
@@ -194,6 +205,13 @@ class Package:
         print()
 
     def __str__(self):
+        """
+        String representation of package object
+        :return: None
+
+        Worst Case Runtime Complexity: O(1)
+        Best Case Runtime Complexity: O(1)
+        """
         special_instructions = self._special_instructions
         if not special_instructions:
             special_instructions = "None"
@@ -202,5 +220,12 @@ class Package:
         return result
 
     def __eq__(self, other):
+        """
+        :param other: package object to be compared with
+        :return: Boolean representing whether the objects are equal or not :Boolean
+
+        Worst Case Runtime Complexity: O(1)
+        Best Case Runtime Complexity: O(1)
+        """
         return self._package_id == other.package_id
 

@@ -4,6 +4,9 @@ class Clock:
         """
         Create a clock object set at a particular time
         :param time: time representing number of seconds since start time :int
+
+        Worst Case Runtime Complexity: O(1)
+        Best Case Runtime Complexity: O(1)
         """
 
         self._time = time
@@ -45,6 +48,9 @@ class Clock:
         """
         Advance time by 1 second
         :return: Void
+
+        Worst Case Runtime Complexity: O(1)
+        Best Case Runtime Complexity: O(1)
         """
         self._time += 1
 
@@ -133,9 +139,10 @@ class Clock:
             minutes_str = "0" + minutes_str
 
         # If hours is greater than 12, then am_pm becomes "PM" and hours subtracted by 12
-        if hours > 12:
+        if hours >= 12:
             am_pm = "PM"
-            hours -= 12
+            if hours > 12:
+                hours -= 12
 
         # return time in string format
         return f"{hours}:{minutes_str} {am_pm}"
@@ -177,6 +184,9 @@ class Clock:
         :param time: time string in format: HH:MM AM/PM to be converted
         :param start_time: the method counts the number of seconds from this time
         :return: number of seconds since start time
+
+        Worst Case Runtime Complexity: O(1)
+        Best Case Runtime Complexity: O(1)
         """
 
         # initialize num_seconds to zero
@@ -197,6 +207,14 @@ class Clock:
 
     @staticmethod
     def total_duration(time):
+        """
+        Returns total elapsed time
+        :param time: current time
+        :return: hours, minutes, seconds elapsed :3-tuple
+
+        Worst Case Runtime Complexity: O(N)
+        Best Case Runtime Complexity: O(N)
+        """
         duration = time
         hours = 0
         minutes = 0

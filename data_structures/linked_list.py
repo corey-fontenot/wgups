@@ -19,6 +19,8 @@ class LinkedList:
     """
     Singly-Linked List
         holds nodes which each point to the next node in the list
+
+    space complexity: O(N)
     """
 
     def __init__(self):
@@ -214,6 +216,11 @@ class LinkedList:
         return LinkedListIterator(self)
 
     def __str__(self):
+        """
+        Worst Case Runtime Complexity: O(1)
+        Best Case Runtime Complexity: O(1)
+        :return:
+        """
         result = ''
         for item in self:
             result += str(item)
@@ -225,6 +232,11 @@ class LinkedListIterator:
     Iterator for Linked List Class
     """
     def __init__(self, linked_list):
+        """
+        Worst Case Runtime Complexity: O(1)
+        Best Case Runtime Complexity: O(1)
+        :param linked_list:
+        """
         self._linked_list = linked_list
         self._index = 0
 
@@ -232,6 +244,9 @@ class LinkedListIterator:
         """
         Returns next object from Linked List
         :return: Linked List node
+
+        Worst Case Runtime Complexity: O(N)
+        Best Case Runtime Complexity: O(1) (First item in the list)
         """
         if self._index < self._linked_list.length:
             cur_node = self._linked_list.head

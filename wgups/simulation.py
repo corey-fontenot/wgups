@@ -10,6 +10,15 @@ from data_structures.graph import Graph
 
 class Simulation:
     def __init__(self, start_time, delayed_flight_time, table_size):
+        """
+        Create a Simulation Object
+        :param start_time: start time of simulation
+        :param delayed_flight_time: time delayed packages arrive on flight
+        :param table_size: size of the hashtable
+
+        Worst Case Runtime Complexity: O(1)
+        Best Case Runtime Complexity: O(1)
+        """
         self._start_time = start_time
         self._clock = Clock(0, start_time)
         self._packages = HashTable(table_size)
@@ -23,9 +32,29 @@ class Simulation:
         self.wrong_address_fixed = False
 
     def add_package(self, package):
+        """
+        Add a package to the simulation
+        :param package: package to be added
+        :return: Void
+
+        Worst Case Runtime Complexity: O(N)
+        Best Case Runtime Complexity: O(1)
+        """
         self._packages.insert(package)
 
     def setup(self, num_trucks, packages_per_truck, truck_mph, start_of_day, end_of_day):
+        """
+        Sets up simulations by loading and queueing up trucks
+        :param num_trucks: number of trucks available
+        :param packages_per_truck: number of packages per truck
+        :param truck_mph: speed of truck in miles per hour
+        :param start_of_day: start time of simulation
+        :param end_of_day: time of end of day
+        :return: None
+
+        Worst Case Runtime Complexity: O(N^2)
+        Best Case Runtime Complexity: O(N^2)
+        """
         truck_list = []
         for truck_id in range(1, num_trucks + 1):
             truck_list.append(Truck(truck_id, packages_per_truck, truck_mph, start_of_day, self.locations.get_vertex_by_index(0).data))
@@ -40,6 +69,13 @@ class Simulation:
             self._trucks.push(truck)
 
     def main_menu(self):
+        """
+        Main menu for simulation control
+        :return: None
+
+        Worst Case Runtime Complexity: O(N^2)
+        Best Case Runtime Complexity: O(1)
+        """
         selection = 0
         min_choice = 1
         max_choice = 3
@@ -61,14 +97,22 @@ class Simulation:
             sys.exit()
 
     def package_menu(self):
+        """
+        Menu for printing package information
+
+        Worst Case Runtime Complexity: O(N)
+        Best Case Runtime Complexity: O(1)
+        :return:
+        """
         selection = 0
         min_choice = 1
-        max_choice = 3
+        max_choice = 4
         while selection not in range(min_choice, max_choice + 1):
             print()
             print("1.\tPrint package by ID")
             print("2.\tPrint all packages")
-            print("3.\tMain Menu")
+            print("3.\tPrint packages by truck")
+            print("4.\tMain Menu")
             print()
 
             selection = int(input("Enter Selection: "))
@@ -87,9 +131,24 @@ class Simulation:
             for package in self._packages:
                 package.print(self._start_time)
         elif selection == 3:
+            print()
+            print("---------------------------------------------------------------------------------------------------")
+            for num in range(1, 4):
+                print(f"{Clock.to_time_string(self._clock.time, self._start_time)} : Truck {num} Packages:")
+                for package in self._packages:
+                    if package.truck == num and package.status != "DELIVERED":
+                        package.print(self._start_time)
+        elif selection == 4:
             self.main_menu()
 
     def clock_menu(self):
+        """
+        Menu to get amount of time to move simulation forward
+        :return: None
+
+        Worst Case Runtime Complexity: O(N^2)
+        Best Case Runtime Complexity: O(1)
+        """
         selection = 0
         min_choice = 1
         max_choice = 4
@@ -119,6 +178,13 @@ class Simulation:
             self.main_menu()
 
     def start_simulation(self):
+        """
+        Start simulation
+        :return: None
+
+        Worst Case Runtime Complexity: O(N^2)
+        Best Case Runtime Complexity: O(1)
+        """
         self._active_trucks.append(self._trucks.pop())
         for truck in self._active_trucks:
             truck.start_route(self._clock.time)
@@ -133,6 +199,13 @@ class Simulation:
             package.print(self._start_time)
 
     def print_summary(self):
+        """
+        Print summary information for simulation
+        :return: None
+
+        Worst Case Runtime Complexity: O(1)
+        Best Case Runtime Complexity: O(1)
+        """
         print(f"Total Distance: {self._total_miles:.2f} Miles")
 
         late_packages = 0
@@ -158,12 +231,23 @@ class Simulation:
         print(f"Duration: {duration[0]} Hours {duration[1]} Minutes {duration[2]} Seconds")
 
     def advance_simulation(self, time_amount):
+        """
+        Move simulation forward
+        :param time_amount: amount of time to move simulation forward
+        :return: None
+
+        Worst Case Runtime Complexity: O(N^2)
+        Best Case Runtime Complexity: O(N^2)
+        """
         # Run simulation for amount of time selected in clock menu
         while self._clock.time < time_amount and not self.simulation_over:
 
             # advance time forward
             self._clock.advance_time()
 
+            # Fix wrong address package if current time is 10:20 AM or later
+            # Worst Case Runtime Complexity: O(1)
+            # Best Case Runtime Complexity: O(1)
             if self._clock.time >= Clock.seconds_since_start("10:20 AM", self._start_time) \
                     and not self.wrong_address_fixed:
                 new_location = Location("410 S State St", "Salt Lake City", "UT", "84111", "")
@@ -172,6 +256,8 @@ class Simulation:
                 print(f"{Clock.to_time_string(self._clock.time, self._start_time)} : Package 9 address changed to {new_location}")
 
             # for each truck update truck and package data
+            # Worst Case Runtime Complexity: O(N)
+            # Best Case Runtime Complexity: O(N)
             for truck in self._active_trucks:
 
                 # move truck for one second
@@ -181,6 +267,8 @@ class Simulation:
                 if truck.distance_traveled >= truck.next_location[1]:
 
                     # deliver packages for current location
+                    # Worst Case Runtime Complexity: O(N)
+                    # Best Case Runtime Complexity: O(N)
                     delivered_packages = [x for x in truck.get_package_list() if x.location == truck.next_location[0].data]
                     for package in delivered_packages:
                         truck.deliver_package(package)
